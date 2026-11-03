@@ -61,31 +61,29 @@ const _searchPage = '''
 ''';
 
 class _FakeSite {
-  _FakeSite({
-    this.lists = const [
-      (0, 'Reading List'),
-      (1, 'Completed'),
-      (5, 'Korean Picks'),
-    ],
-    Map<int, List<(String, String, String?, String?, String?)>>? rows,
-  }) : rows =
-           rows ??
-           {
-             0: [
-               (
-                 'the-legendary-mechanic',
-                 'The Legendary Mechanic',
-                 'c10-11',
-                 '5000002',
-                 'c12',
-               ),
-               ('volume-novel', 'Volume Novel', 'v3c12', null, 'v5c3'),
-             ],
-             1: [('done-novel', 'Done Novel', 'c40', null, 'c40')],
-             5: [('korean-one', 'Korean One', null, null, 'c7')],
-           };
+  _FakeSite({Map<int, List<(String, String, String?, String?, String?)>>? rows})
+    : rows =
+          rows ??
+          {
+            0: [
+              (
+                'the-legendary-mechanic',
+                'The Legendary Mechanic',
+                'c10-11',
+                '5000002',
+                'c12',
+              ),
+              ('volume-novel', 'Volume Novel', 'v3c12', null, 'v5c3'),
+            ],
+            1: [('done-novel', 'Done Novel', 'c40', null, 'c40')],
+            5: [('korean-one', 'Korean One', null, null, 'c7')],
+          };
 
-  final List<(int, String)> lists;
+  final List<(int, String)> lists = const [
+    (0, 'Reading List'),
+    (1, 'Completed'),
+    (5, 'Korean Picks'),
+  ];
   final Map<int, List<(String, String, String?, String?, String?)>> rows;
   final List<String> requests = [];
   bool cloudflare = false;
@@ -98,8 +96,9 @@ class _FakeSite {
     String? body,
   }) async {
     requests.add(method == 'POST' ? 'POST $url $body' : url);
-    if (cloudflare)
+    if (cloudflare) {
       return (status: 403, body: 'Just a moment', cloudflare: true);
+    }
     final u = Uri.parse(url);
     if (u.path == '/reading-list/') {
       if (signedOut) {

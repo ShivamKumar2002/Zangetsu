@@ -77,6 +77,10 @@ void _driftGuard() {
       'mal': 'oauth token',
       'simkl': 'oauth token',
       'mangabaka': 'oauth token',
+      // No secret in it, but the account name only means anything beside this
+      // device's in-app browser cookies; restored elsewhere it would show an
+      // account that cannot make a single request.
+      'novelupdates': 'session tied to device browser cookies',
       'discord': 'rpc token',
       'auth_cache': 'session cache',
       // Device-specific: holds a SAF content:// URI that is meaningless (and

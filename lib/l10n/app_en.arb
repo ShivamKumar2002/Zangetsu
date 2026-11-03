@@ -3146,5 +3146,27 @@
 	"mangaTranslationPreview": "Translation preview",
 	"mangaTranslationAppearanceFitNote": "Long text may scale down to stay inside its detected area and avoid overlap.",
 	"mangaTranslationShowOriginal": "Show original page",
-	"mangaTranslationShowTranslations": "Show translations"
+	"mangaTranslationShowTranslations": "Show translations",
+	"homeRowNewChapters": "New Chapters",
+	"novelUpdatesAbout": "Each novel chapter you finish moves your read marker on Novel Updates, and a status you set on a novel moves it to the reading list named for it. Novels only. You sign in on the Novel Updates site in the in-app browser — the same session the NovelUpdates source uses, so disconnecting here does not sign that out.",
+	"novelUpdatesImport": "Import reading lists",
+	"novelUpdatesImportSubtitle": "Add your Novel Updates novels to My List",
+	"novelUpdatesImporting": "Importing…",
+	"novelUpdatesImported": "Added {added} to My List · {skipped} already there",
+	"@novelUpdatesImported": {
+		"placeholders": {
+			"added": {
+				"type": "int"
+			},
+			"skipped": {
+				"type": "int"
+			}
+		}
+	},
+	"novelUpdatesNeedsSource": "Install the NovelUpdates source first — imported novels open through it.",
+	"novelUpdatesNeedsAccount": "Sign in to Zangetsu first — My List belongs to your account.",
+	"novelUpdatesCloudflare": "Novel Updates wants a Cloudflare check. Open the site once, then try again.",
+	"novelUpdatesSignedOut": "Your Novel Updates session has ended. Connect again.",
+	"novelUpdatesUnreachable": "Couldn't read your Novel Updates lists. Try again later.",
+	"novelUpdatesOpenSite": "Open Novel Updates"
 }

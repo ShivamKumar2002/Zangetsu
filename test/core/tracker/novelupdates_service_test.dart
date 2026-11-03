@@ -20,7 +20,10 @@ const _site = 'https://www.novelupdates.com';
 
 String _listPage({
   required List<(int, String)> lists,
-  required List<(String slug, String title, String? read, String? readId, String? latest)> rows,
+  required List<
+    (String slug, String title, String? read, String? readId, String? latest)
+  >
+  rows,
 }) {
   final tabs = [
     for (final (i, name) in lists)
@@ -59,17 +62,28 @@ const _searchPage = '''
 
 class _FakeSite {
   _FakeSite({
-    this.lists = const [(0, 'Reading List'), (1, 'Completed'), (5, 'Korean Picks')],
+    this.lists = const [
+      (0, 'Reading List'),
+      (1, 'Completed'),
+      (5, 'Korean Picks'),
+    ],
     Map<int, List<(String, String, String?, String?, String?)>>? rows,
-  }) : rows = rows ??
-            {
-              0: [
-                ('the-legendary-mechanic', 'The Legendary Mechanic', 'c10-11', '5000002', 'c12'),
-                ('volume-novel', 'Volume Novel', 'v3c12', null, 'v5c3'),
-              ],
-              1: [('done-novel', 'Done Novel', 'c40', null, 'c40')],
-              5: [('korean-one', 'Korean One', null, null, 'c7')],
-            };
+  }) : rows =
+           rows ??
+           {
+             0: [
+               (
+                 'the-legendary-mechanic',
+                 'The Legendary Mechanic',
+                 'c10-11',
+                 '5000002',
+                 'c12',
+               ),
+               ('volume-novel', 'Volume Novel', 'v3c12', null, 'v5c3'),
+             ],
+             1: [('done-novel', 'Done Novel', 'c40', null, 'c40')],
+             5: [('korean-one', 'Korean One', null, null, 'c7')],
+           };
 
   final List<(int, String)> lists;
   final Map<int, List<(String, String, String?, String?, String?)>> rows;
@@ -84,7 +98,8 @@ class _FakeSite {
     String? body,
   }) async {
     requests.add(method == 'POST' ? 'POST $url $body' : url);
-    if (cloudflare) return (status: 403, body: 'Just a moment', cloudflare: true);
+    if (cloudflare)
+      return (status: 403, body: 'Just a moment', cloudflare: true);
     final u = Uri.parse(url);
     if (u.path == '/reading-list/') {
       if (signedOut) {
@@ -161,13 +176,15 @@ void main() {
       expect(svc.isConnected, isFalse);
     });
 
-    test('disconnect forgets the account but leaves the browser alone',
-        () async {
-      await svc.connect();
-      await svc.disconnect();
-      expect(svc.isConnected, isFalse);
-      expect(site.requests, isEmpty, reason: 'no sign-out call to the site');
-    });
+    test(
+      'disconnect forgets the account but leaves the browser alone',
+      () async {
+        await svc.connect();
+        await svc.disconnect();
+        expect(svc.isConnected, isFalse);
+        expect(site.requests, isEmpty, reason: 'no sign-out call to the site');
+      },
+    );
 
     test('never relayed to the TV: the session is browser cookies', () async {
       await svc.connect();
@@ -192,14 +209,11 @@ void main() {
         WatchStatus.planning,
       ]);
       expect(items.every((e) => e.item.type == ProviderType.novel), isTrue);
-      expect(
-        site.requests,
-        [
-          '$_site/reading-list/?list=0',
-          '$_site/reading-list/?list=1',
-          '$_site/reading-list/?list=5',
-        ],
-      );
+      expect(site.requests, [
+        '$_site/reading-list/?list=0',
+        '$_site/reading-list/?list=1',
+        '$_site/reading-list/?list=5',
+      ]);
     });
 
     test('progress and the newest release when they compare', () async {
@@ -222,14 +236,19 @@ void main() {
       expect(items.first.customLists, isEmpty);
     });
 
-    test('without the Novel Updates source the entries are plain stubs',
-        () async {
-      await svc.connect();
-      final first = (await svc.fetchList()).first;
-      expect(first.item.sourceId, isEmpty);
-      expect(first.item.url, isEmpty);
-      expect(first.item.id, 'tracker:novelupdates:novel:the-legendary-mechanic');
-    });
+    test(
+      'without the Novel Updates source the entries are plain stubs',
+      () async {
+        await svc.connect();
+        final first = (await svc.fetchList()).first;
+        expect(first.item.sourceId, isEmpty);
+        expect(first.item.url, isEmpty);
+        expect(
+          first.item.id,
+          'tracker:novelupdates:novel:the-legendary-mechanic',
+        );
+      },
+    );
 
     test('kept for a while: a second read makes no requests', () async {
       await svc.connect();
@@ -262,8 +281,7 @@ void main() {
   });
 
   group('scrobbleChapter', () {
-    test('read through the Novel Updates source: that exact release',
-        () async {
+    test('read through the Novel Updates source: that exact release', () async {
       await svc.connect();
       await svc.scrobbleChapter(
         chapter: 3, // the plugin's position, NOT the chapter — must be ignored
@@ -307,17 +325,19 @@ void main() {
       expect(site.writes, isEmpty);
     });
 
-    test('a series on none of the lists goes on the reading list first',
-        () async {
-      site = _FakeSite(rows: {0: const [], 1: const [], 5: const []});
-      svc = make();
-      await svc.connect();
-      await svc.scrobbleChapter(title: 'The Legendary Mechanic', chapter: 12);
-      expect(site.writes, [
-        '$_site/updatelist.php?sid=104271&lid=0&act=move',
-        '$_site/readinglist_update.php?rid=5000003&sid=104271&checked=yes',
-      ]);
-    });
+    test(
+      'a series on none of the lists goes on the reading list first',
+      () async {
+        site = _FakeSite(rows: {0: const [], 1: const [], 5: const []});
+        svc = make();
+        await svc.connect();
+        await svc.scrobbleChapter(title: 'The Legendary Mechanic', chapter: 12);
+        expect(site.writes, [
+          '$_site/updatelist.php?sid=104271&lid=0&act=move',
+          '$_site/readinglist_update.php?rid=5000003&sid=104271&checked=yes',
+        ]);
+      },
+    );
 
     test('auto-sync off: not a single request', () async {
       await svc.connect();
@@ -331,10 +351,7 @@ void main() {
       await svc.scrobbleChapter(title: 'The Legendary Mechanic', chapter: 12);
       site.requests.clear();
       await svc.scrobbleChapter(title: 'The Legendary Mechanic', chapter: 12);
-      expect(
-        site.requests.where((r) => r.contains('/series/')),
-        isEmpty,
-      );
+      expect(site.requests.where((r) => r.contains('/series/')), isEmpty);
     });
   });
 
@@ -409,12 +426,8 @@ void main() {
   });
 
   group('forward check', () {
-    NuListRow row(String? read, [String? id]) => NuListRow(
-      slug: 's',
-      title: 't',
-      lastRead: read,
-      lastReadId: id,
-    );
+    NuListRow row(String? read, [String? id]) =>
+        NuListRow(slug: 's', title: 't', lastRead: read, lastReadId: id);
 
     test('forward, backward, same, unknown', () {
       const c12 = NuRelease(id: '12', label: 'c12');

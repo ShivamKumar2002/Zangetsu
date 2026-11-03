@@ -119,7 +119,10 @@ void main() {
     });
 
     test('a page without the post id answers null, not a guess', () {
-      expect(NovelUpdatesParser.postId('<html>Just a moment...</html>'), isNull);
+      expect(
+        NovelUpdatesParser.postId('<html>Just a moment...</html>'),
+        isNull,
+      );
       expect(
         NovelUpdatesParser.postId('<input id="mypostid" value="  ">'),
         isNull,
@@ -128,24 +131,26 @@ void main() {
   });
 
   group('release list', () {
-    test('reads release ids and labels, in site order, skipping link-less rows',
-        () {
-      final r = NovelUpdatesParser.releases(_releases);
-      expect(r.map((e) => e.id), [
-        '5000003',
-        '5000002',
-        '5000009',
-        '5000001',
-        '5000000',
-      ]);
-      expect(r.map((e) => e.label), [
-        'c12',
-        'c10-11',
-        'c9',
-        'c9',
-        'prologue',
-      ]);
-    });
+    test(
+      'reads release ids and labels, in site order, skipping link-less rows',
+      () {
+        final r = NovelUpdatesParser.releases(_releases);
+        expect(r.map((e) => e.id), [
+          '5000003',
+          '5000002',
+          '5000009',
+          '5000001',
+          '5000000',
+        ]);
+        expect(r.map((e) => e.label), [
+          'c12',
+          'c10-11',
+          'c9',
+          'c9',
+          'prologue',
+        ]);
+      },
+    );
   });
 
   test('search hits: slug, title, protocol-relative cover made absolute', () {
@@ -209,7 +214,8 @@ void main() {
 
   group('session cookie', () {
     test('username is the first field of the logged-in cookie', () {
-      const header = 'cf_clearance=abc; '
+      const header =
+          'cf_clearance=abc; '
           'wordpress_logged_in_9f3c=Some%20Reader%7C1790000000%7Ctok%7Chmac; '
           'other=1';
       expect(NovelUpdatesParser.usernameFromCookies(header), 'Some Reader');
@@ -281,17 +287,17 @@ void main() {
 
   group('comparable progress', () {
     test('plain chapters compare', () {
-      expect(
-        NovelUpdatesParser.comparable('c10-11', 'c12'),
-        (read: 11.0, latest: 12.0),
-      );
+      expect(NovelUpdatesParser.comparable('c10-11', 'c12'), (
+        read: 11.0,
+        latest: 12.0,
+      ));
     });
 
     test('same volume compares, different volumes do not', () {
-      expect(
-        NovelUpdatesParser.comparable('v3c2', 'v3c9'),
-        (read: 2.0, latest: 9.0),
-      );
+      expect(NovelUpdatesParser.comparable('v3c2', 'v3c9'), (
+        read: 2.0,
+        latest: 9.0,
+      ));
       expect(NovelUpdatesParser.comparable('v3c12', 'v5c3'), isNull);
       expect(NovelUpdatesParser.comparable('c3', 'v1c9'), isNull);
     });

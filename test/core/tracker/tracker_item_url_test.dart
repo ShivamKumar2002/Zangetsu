@@ -132,4 +132,19 @@ void main() {
     expect(p.malId, 21);
     expect(p.savedFrom, 'AniList');
   });
+
+  test('a stub that names a real source opens on it as it is', () {
+    // NovelUpdates' entries are its novel source's own items.
+    const nu = MediaItem(
+      id: 'series/the-legendary-mechanic/',
+      title: 'The Legendary Mechanic',
+      url: 'series/the-legendary-mechanic/',
+      type: ProviderType.novel,
+      sourceId: 'lnr:novelupdates',
+    );
+    final p = playableTrackerItem(nu, savedFrom: 'NovelUpdates');
+    expect(p?.sourceId, 'lnr:novelupdates');
+    expect(p?.url, 'series/the-legendary-mechanic/');
+    expect(p?.savedFrom, 'NovelUpdates');
+  });
 }

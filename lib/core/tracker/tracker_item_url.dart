@@ -68,7 +68,13 @@ ZCanonical? trackerCanonical(MediaItem stub) {
 /// A tracker stub re-keyed to its metadata identity so a tap opens its Detail
 /// page. Null when the stub has no id to go on — the caller falls back to a
 /// search for the title ([SearchScreen] with the stub's title as the query).
+///
+/// A stub that already names a real source and url — NovelUpdates' entries,
+/// when its novel source is installed — is opened on that source as it is.
 MediaItem? playableTrackerItem(MediaItem stub, {String? savedFrom}) {
+  if (stub.sourceId.isNotEmpty && stub.url.isNotEmpty) {
+    return savedFrom == null ? stub : stub.copyWith(savedFrom: savedFrom);
+  }
   final c = trackerCanonical(stub);
   if (c == null) return null;
   return MediaItem(

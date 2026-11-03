@@ -178,7 +178,10 @@ class NewEpisodesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SizedBox.shrink();
     return ContentRow(
-      title: context.l10n.homeRowNewEpisodes,
+      // Only novels reach a reading new-releases row (see hasNewEpisode).
+      title: trackerEntryIsReading(items.first)
+          ? context.l10n.homeRowNewChapters
+          : context.l10n.homeRowNewEpisodes,
       overline: trackerName,
       onSeeAll: onSeeAll,
       itemWidth: posterRowWidth(context),

@@ -111,7 +111,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "de": [
@@ -340,7 +352,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "es": [
@@ -569,7 +593,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "fr": [
@@ -798,7 +834,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "id": [
@@ -913,7 +961,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "it": [
@@ -1142,7 +1202,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "ja": [
@@ -1371,7 +1443,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "pt": [
@@ -1486,7 +1570,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "tr": [
@@ -1601,7 +1697,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "zh": [
@@ -1830,7 +1938,19 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ],
 
   "zh_TW": [
@@ -2059,6 +2179,18 @@
     "mangaTranslationPreview",
     "mangaTranslationAppearanceFitNote",
     "mangaTranslationShowOriginal",
-    "mangaTranslationShowTranslations"
+    "mangaTranslationShowTranslations",
+    "homeRowNewChapters",
+    "novelUpdatesAbout",
+    "novelUpdatesImport",
+    "novelUpdatesImportSubtitle",
+    "novelUpdatesImporting",
+    "novelUpdatesImported",
+    "novelUpdatesNeedsSource",
+    "novelUpdatesNeedsAccount",
+    "novelUpdatesCloudflare",
+    "novelUpdatesSignedOut",
+    "novelUpdatesUnreachable",
+    "novelUpdatesOpenSite"
   ]
 }

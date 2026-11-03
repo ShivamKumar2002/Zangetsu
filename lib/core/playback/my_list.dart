@@ -42,6 +42,15 @@ class MyListRemote {
     await _cloud.from(table).upsert(row);
   }
 
+  /// [upsert] for many rows of ONE profile in a single request — a bulk add
+  /// is one round trip, not one per title.
+  Future<void> upsertAll(List<Map<String, dynamic>> rows) async {
+    if (rows.isEmpty) return;
+    final profileId = rows.first['profile_id'] as String?;
+    final table = profileId == null ? 'mylist' : 'profile_mylist';
+    await _cloud.from(table).upsert(rows);
+  }
+
   Future<void> deleteRow(
     String userKey,
     String sourceId,
@@ -430,6 +439,47 @@ class MyListStore {
     if (_currentUserId() == null) return;
     if (_box.containsKey(_key(m))) return;
     await toggle(m);
+  }
+
+  /// Adds many titles at once — the Novel Updates import. Titles already in
+  /// the list are left alone. Returns how many were added; 0 when signed out,
+  /// since My List belongs to an account (the same rule as [add]).
+  ///
+  /// Every title is written locally first, then the batch goes to the cloud
+  /// in ONE upsert instead of one round trip per title. If that fails, each
+  /// row is left pending exactly as a failed single add is, so
+  /// [retryPending] sends them later.
+  Future<int> addAll(List<MediaItem> items) async {
+    final uid = _currentUserId();
+    if (uid == null) return 0;
+    final profileId = _profileId;
+    final added = <MediaItem>[];
+    for (final m in items) {
+      final k = _key(m, profileId);
+      if (_box.containsKey(k)) continue;
+      await _box.put(k, _stamped(m).toJson());
+      added.add(m);
+    }
+    if (added.isEmpty) return 0;
+    revision.value++;
+    try {
+      await _remote.upsertAll([
+        for (final m in added) _cloudRow(uid, m, profileId),
+      ]);
+      for (final m in added) {
+        _clearPendingDelete(m.sourceId, m.id, profileId);
+        _clearPending(_key(m, profileId), profileId);
+      }
+    } catch (e) {
+      AppLogger.instance.log(
+        'mylist cloud bulk add of ${added.length} failed: $e',
+        level: 'E',
+      );
+      for (final m in added) {
+        _markPending(_key(m, profileId), profileId);
+      }
+    }
+    return added.length;
   }
 
   /// Records which catalogue a metadata title came from, once, on the way in.

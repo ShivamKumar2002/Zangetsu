@@ -9801,6 +9801,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show translations'**
   String get mangaTranslationShowTranslations;
+
+  /// No description provided for @homeRowNewChapters.
+  ///
+  /// In en, this message translates to:
+  /// **'New Chapters'**
+  String get homeRowNewChapters;
+
+  /// No description provided for @novelUpdatesAbout.
+  ///
+  /// In en, this message translates to:
+  /// **'Each novel chapter you finish moves your read marker on Novel Updates, and a status you set on a novel moves it to the reading list named for it. Novels only. You sign in on the Novel Updates site in the in-app browser — the same session the NovelUpdates source uses, so disconnecting here does not sign that out.'**
+  String get novelUpdatesAbout;
+
+  /// No description provided for @novelUpdatesImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Import reading lists'**
+  String get novelUpdatesImport;
+
+  /// No description provided for @novelUpdatesImportSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your Novel Updates novels to My List'**
+  String get novelUpdatesImportSubtitle;
+
+  /// No description provided for @novelUpdatesImporting.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing…'**
+  String get novelUpdatesImporting;
+
+  /// No description provided for @novelUpdatesImported.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {added} to My List · {skipped} already there'**
+  String novelUpdatesImported(int added, int skipped);
+
+  /// No description provided for @novelUpdatesNeedsSource.
+  ///
+  /// In en, this message translates to:
+  /// **'Install the NovelUpdates source first — imported novels open through it.'**
+  String get novelUpdatesNeedsSource;
+
+  /// No description provided for @novelUpdatesNeedsAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to Zangetsu first — My List belongs to your account.'**
+  String get novelUpdatesNeedsAccount;
+
+  /// No description provided for @novelUpdatesCloudflare.
+  ///
+  /// In en, this message translates to:
+  /// **'Novel Updates wants a Cloudflare check. Open the site once, then try again.'**
+  String get novelUpdatesCloudflare;
+
+  /// No description provided for @novelUpdatesSignedOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Novel Updates session has ended. Connect again.'**
+  String get novelUpdatesSignedOut;
+
+  /// No description provided for @novelUpdatesUnreachable.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t read your Novel Updates lists. Try again later.'**
+  String get novelUpdatesUnreachable;
+
+  /// No description provided for @novelUpdatesOpenSite.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Novel Updates'**
+  String get novelUpdatesOpenSite;
 }
 
 class _AppLocalizationsDelegate

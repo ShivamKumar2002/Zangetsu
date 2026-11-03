@@ -1220,7 +1220,9 @@ class _HomeViewState extends State<_HomeView>
       context,
       MaterialPageRoute<void>(
         builder: (_) => SeeAllScreen(
-          title: context.l10n.homeRowNewEpisodes,
+          title: items.isNotEmpty && trackerEntryIsReading(items.first)
+              ? context.l10n.homeRowNewChapters
+              : context.l10n.homeRowNewEpisodes,
           items: [for (final e in items) e.item],
           onTap: _openTrackerItem,
           tagsFor: (item) => ['+${waiting[item.id] ?? 0}'],

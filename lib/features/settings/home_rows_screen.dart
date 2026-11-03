@@ -472,7 +472,9 @@ class _HomeRowsScreenState extends State<HomeRowsScreen> {
     if (id == trackerContinueRowId) {
       return l10n.homeRowTrackerContinue(_trackerName);
     }
-    if (id == newEpisodesRowId) return l10n.homeRowNewEpisodes;
+    if (id == newEpisodesRowId) {
+      return _reading ? l10n.homeRowNewChapters : l10n.homeRowNewEpisodes;
+    }
     if (id == streamingServicesRowId) return l10n.streamingServices;
     if (id.startsWith('section:')) return id.substring('section:'.length);
     final status = WatchStatus.values.asNameMap()[id.substring(

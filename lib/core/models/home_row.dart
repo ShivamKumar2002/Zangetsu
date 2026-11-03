@@ -134,12 +134,12 @@ final List<String> trackerRowIds = [
   for (final s in trackerListRowStatuses) 'tracker:${s.name}',
 ];
 
-/// The tracker rows [kind] can actually fill. Reading has no episode feed —
-/// `hasNewEpisode` is false for manga and novel — so a reading layout never
-/// gets the new-episodes row, and the editor shouldn't offer a switch that
-/// can never light up.
-List<String> trackerRowIdsFor(ZKind? kind) =>
-    kind == ZKind.manga || kind == ZKind.novel
+/// The tracker rows [kind] can actually fill. Manga has no release feed —
+/// `hasNewEpisode` is false for it — so a manga layout never gets the
+/// new-episodes row, and the editor shouldn't offer a switch that can never
+/// light up. Novels keep it: NovelUpdates reports each series' newest
+/// release, and the row reads "New Chapters" there.
+List<String> trackerRowIdsFor(ZKind? kind) => kind == ZKind.manga
     ? [
         for (final id in trackerRowIds)
           if (id != newEpisodesRowId) id,

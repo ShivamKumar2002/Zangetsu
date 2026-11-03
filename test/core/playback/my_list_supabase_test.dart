@@ -30,6 +30,20 @@ class FakeMyListRemote implements MyListRemote {
     return versions[key] = (versions[key] ?? 0) + 1;
   }
 
+  int upsertAllCalls = 0;
+
+  @override
+  Future<void> upsertAll(List<Map<String, dynamic>> rows) async {
+    upsertAllCalls++;
+    if (failNext) {
+      failNext = false;
+      throw Exception('network down');
+    }
+    for (final r in rows) {
+      await upsert(r);
+    }
+  }
+
   @override
   Future<void> upsert(Map<String, dynamic> row) async {
     if (failNext) {
@@ -238,6 +252,47 @@ void main() {
       expect(fake.rows.any((row) => row['item_id'] == 'shared'), isTrue);
     },
   );
+
+  group('addAll (bulk import)', () {
+    test('one cloud call for the batch, existing titles left alone', () async {
+      await store.add(_item(id: 'already'));
+      final added = await store.addAll([
+        _item(id: 'already'),
+        _item(id: 'n1'),
+        _item(id: 'n2'),
+      ]);
+      expect(added, 2);
+      expect(fake.upsertAllCalls, 1);
+      expect(store.all().map((m) => m.id).toSet(), {'already', 'n1', 'n2'});
+      expect(fake.rows.map((r) => r['item_id']).toSet(), {
+        'already',
+        'n1',
+        'n2',
+      });
+      expect(store.pendingKeys(), isEmpty);
+    });
+
+    test('signed out: nothing is added', () async {
+      final loggedOut = MyListStore(
+        SupabaseService(),
+        () => null,
+        remote: fake,
+      );
+      expect(await loggedOut.addAll([_item(id: 'g')]), 0);
+      expect(Hive.box<Map>(MyListStore.boxName).isEmpty, isTrue);
+      expect(fake.upsertAllCalls, 0);
+    });
+
+    test('a failed batch leaves every row pending for retry', () async {
+      fake.failNext = true;
+      expect(await store.addAll([_item(id: 'a'), _item(id: 'b')]), 2);
+      expect(store.all(), hasLength(2), reason: 'kept locally');
+      expect(store.pendingKeys(), hasLength(2));
+      await store.retryPending();
+      expect(fake.rows.map((r) => r['item_id']).toSet(), {'a', 'b'});
+      expect(store.pendingKeys(), isEmpty);
+    });
+  });
 
   test('add() upserts a row with the right composite key + fields', () async {
     await store.add(_item());

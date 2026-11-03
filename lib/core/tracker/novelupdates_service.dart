@@ -199,7 +199,8 @@ class NovelUpdatesService extends ChangeNotifier implements Tracker {
             'Accept-Language': 'en-US,en;q=0.9',
             'Referer': referer ?? '$_site/',
             if (form != null)
-              'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+              'Content-Type':
+                  'application/x-www-form-urlencoded; charset=UTF-8',
             if (form != null) 'X-Requested-With': 'XMLHttpRequest',
           },
           body: form,
@@ -382,7 +383,8 @@ class NovelUpdatesService extends ChangeNotifier implements Tracker {
     final linked = _sourceInstalled();
     final path = 'series/${row.slug}/';
     final both = NovelUpdatesParser.comparable(row.lastRead, row.latest);
-    final read = both?.read ??
+    final read =
+        both?.read ??
         (row.lastRead == null
             ? null
             : NovelUpdatesParser.labelNumbers(row.lastRead!).chapter);
@@ -602,11 +604,7 @@ class NovelUpdatesService extends ChangeNotifier implements Tracker {
 
   /// Puts the series' read marker on release [releaseId]. The site keeps one
   /// marker per series and clears the old one itself.
-  Future<bool> _mark(
-    String postId,
-    String slug,
-    NuRelease release,
-  ) async {
+  Future<bool> _mark(String postId, String slug, NuRelease release) async {
     final ok = await _write(
       '/readinglist_update.php?rid=${release.id}&sid=$postId&checked=yes',
       slug,

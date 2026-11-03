@@ -55,10 +55,16 @@ int releasedCount(TrackerListItem e) => e.nextAiringEpisode != null
     ? e.nextAiringEpisode! - 1
     : e.totalEpisodes ?? 0;
 
-/// Whether a new episode exists beyond the user's progress. Reading has no
-/// equivalent; a movie is one-shot, so only series count in video kinds.
+/// Whether a new episode exists beyond the user's progress. A movie is
+/// one-shot, so only series count in video kinds.
+///
+/// Manga has no release feed. A novel has one only where its tracker says how
+/// far the releases have got — NovelUpdates' newest release, carried in
+/// [TrackerListItem.nextAiringEpisode]. A series TOTAL is never enough: a
+/// finished novel read halfway has unread chapters, not new ones.
 bool hasNewEpisode(TrackerListItem e, ZKind kind) {
-  if (kind == ZKind.manga || kind == ZKind.novel) return false;
+  if (kind == ZKind.manga) return false;
+  if (kind == ZKind.novel && e.nextAiringEpisode == null) return false;
   if (releasedCount(e) <= (e.progress ?? 0)) return false;
   if (kind == ZKind.movie || kind == ZKind.tv) return e.item.tmdbIsTv;
   return true;

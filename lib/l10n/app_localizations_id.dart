@@ -5666,4 +5666,49 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get mangaTranslationShowTranslations => 'Show translations';
+
+  @override
+  String get homeRowNewChapters => 'New Chapters';
+
+  @override
+  String get novelUpdatesAbout =>
+      'Each novel chapter you finish moves your read marker on Novel Updates, and a status you set on a novel moves it to the reading list named for it. Novels only. You sign in on the Novel Updates site in the in-app browser — the same session the NovelUpdates source uses, so disconnecting here does not sign that out.';
+
+  @override
+  String get novelUpdatesImport => 'Import reading lists';
+
+  @override
+  String get novelUpdatesImportSubtitle =>
+      'Add your Novel Updates novels to My List';
+
+  @override
+  String get novelUpdatesImporting => 'Importing…';
+
+  @override
+  String novelUpdatesImported(int added, int skipped) {
+    return 'Added $added to My List · $skipped already there';
+  }
+
+  @override
+  String get novelUpdatesNeedsSource =>
+      'Install the NovelUpdates source first — imported novels open through it.';
+
+  @override
+  String get novelUpdatesNeedsAccount =>
+      'Sign in to Zangetsu first — My List belongs to your account.';
+
+  @override
+  String get novelUpdatesCloudflare =>
+      'Novel Updates wants a Cloudflare check. Open the site once, then try again.';
+
+  @override
+  String get novelUpdatesSignedOut =>
+      'Your Novel Updates session has ended. Connect again.';
+
+  @override
+  String get novelUpdatesUnreachable =>
+      'Couldn\'t read your Novel Updates lists. Try again later.';
+
+  @override
+  String get novelUpdatesOpenSite => 'Open Novel Updates';
 }

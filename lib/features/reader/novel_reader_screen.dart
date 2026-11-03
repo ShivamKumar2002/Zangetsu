@@ -393,6 +393,12 @@ class _NovelReaderScreenState extends State<NovelReaderScreen>
       episode: n.toInt(),
       kind: MediaKind.manga,
       novel: true, // AniList files this under manga+format:NOVEL, not manga
+      // Where it was read. NovelUpdates marks a chapter read through its own
+      // source exactly — the chapter url is the release — instead of matching
+      // on the chapter number.
+      sourceId: widget.sourceId,
+      showUrl: widget.showUrl ?? widget.showId,
+      chapterUrl: ep.url,
     );
   }
 

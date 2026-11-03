@@ -89,6 +89,7 @@ import '../anilist/anilist_service.dart';
 import '../anilist/anilist_store.dart';
 import '../tracker/mal_service.dart';
 import '../tracker/mangabaka_service.dart';
+import '../tracker/novelupdates_service.dart';
 import '../tracker/simkl_service.dart';
 import '../tracker/tracker_binding_store.dart';
 import '../tracker/tracker_hub.dart';
@@ -615,6 +616,10 @@ Future<void> initDependencies({bool Function()? isOffline}) async {
   sl.registerSingleton<SimklService>(SimklService(dio));
   await MangaBakaService.init();
   sl.registerSingleton<MangaBakaService>(MangaBakaService(dio));
+  // No Dio: Novel Updates is reached through the native novel client, which
+  // carries the in-app browser's sign-in and Cloudflare clearance.
+  await NovelUpdatesService.init();
+  sl.registerSingleton<NovelUpdatesService>(NovelUpdatesService());
   sl.registerSingleton<TrackerHub>(
     TrackerHub([
       sl<AniListService>(),
@@ -624,6 +629,10 @@ Future<void> initDependencies({bool Function()? isOffline}) async {
       // keeps it out of anime contexts the way it already keeps Simkl out of
       // reading ones.
       sl<MangaBakaService>(),
+      // Novels only — TrackerHub asks it about a title only when the caller
+      // says it's a novel. Not in the TV relay below: its session is the
+      // in-app browser's cookies, which stay on this device.
+      sl<NovelUpdatesService>(),
     ]),
   );
   // Manual match corrections (the sync sheet's "Change match"): show → chosen

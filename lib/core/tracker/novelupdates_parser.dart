@@ -125,9 +125,9 @@ abstract final class NovelUpdatesParser {
   /// Releases from the `nd_getchapters` admin-ajax response, in the order the
   /// site sends them (newest first).
   ///
-  /// Each `li.sp_li_chp` holds the release link (`//www.novelupdates.com/
-  /// extnu/<id>/`); its text is the label. Rows without a release link are
-  /// skipped rather than guessed at.
+  /// Each `li.sp_li_chp` holds the release link
+  /// (`//www.novelupdates.com/extnu/<id>/`); its text is the label. Rows
+  /// without a release link are skipped rather than guessed at.
   static List<NuRelease> releases(String ajaxHtml) {
     final doc = html_parser.parse(ajaxHtml);
     final out = <NuRelease>[];

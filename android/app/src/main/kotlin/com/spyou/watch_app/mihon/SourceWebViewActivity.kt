@@ -18,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import io.flutter.plugin.common.MethodChannel
 import eu.kanade.tachiyomi.network.AndroidCookieJar
 import eu.kanade.tachiyomi.network.NetworkHelper
 import eu.kanade.tachiyomi.util.system.setDefaultSettings
@@ -58,6 +59,33 @@ internal fun shouldCloseOnPageFinished(
 }
 
 /**
+ * Whether a sign-in has landed: a cookie whose NAME starts with [doneCookie]
+ * is in [cookie] (a `name=value; name=value` header).
+ *
+ * Matched on the name, not anywhere in the header, so a value that happens to
+ * contain the text cannot end a sign-in early. A prefix, because the cookies
+ * that mean "signed in" are often suffixed per site — WordPress names its
+ * `wordpress_logged_in_<hash>`. Null [doneCookie] means plain login mode,
+ * which never closes itself.
+ */
+internal fun isSignedIn(doneCookie: String?, cookie: String): Boolean {
+    if (doneCookie.isNullOrBlank()) return false
+    return cookie.split(';').any { it.trim().startsWith(doneCookie) }
+}
+
+/**
+ * The one cookie a sign-in caller asked for, as `name=value`, or null.
+ *
+ * Only that cookie goes back to Dart: the caller needs proof of the sign-in
+ * and the account name it carries, not the site's whole jar. The session
+ * itself stays in the WebView jar, where the novel client already reads it.
+ */
+internal fun signInCookie(doneCookie: String?, cookie: String): String? {
+    if (doneCookie.isNullOrBlank()) return null
+    return cookie.split(';').map { it.trim() }.firstOrNull { it.startsWith(doneCookie) }
+}
+
+/**
  * When this screen was last closed, PER HOST.
  *
  * Read by the novel client's cookie jar to decide whether its own stored
@@ -94,6 +122,8 @@ class SourceWebViewActivity : AppCompatActivity() {
 
     private var solved = false
     private var stayOpen = false
+    /** Login mode with a caller waiting — see [EXTRA_DONE_COOKIE]. */
+    private var doneCookie: String? = null
     /** Empty until [onCreate] has a url — [onDestroy] runs even when it hasn't. */
     private var siteHost = ""
     private lateinit var targetUrl: String
@@ -110,6 +140,7 @@ class SourceWebViewActivity : AppCompatActivity() {
         }
         targetUrl = url
         stayOpen = intent.getBooleanExtra(EXTRA_STAY_OPEN, false)
+        doneCookie = if (stayOpen) intent.getStringExtra(EXTRA_DONE_COOKIE) else null
         val screenTitle = intent.getStringExtra(EXTRA_TITLE)
         siteHost = runCatching { Uri.parse(url).host }.getOrNull().orEmpty()
 
@@ -176,9 +207,17 @@ class SourceWebViewActivity : AppCompatActivity() {
         web.loadUrl(url)
     }
 
-    /** Closes the screen as soon as a fresh `cf_clearance` cookie is present. */
+    /**
+     * Closes the screen as soon as a fresh `cf_clearance` cookie is present —
+     * or, for a sign-in someone is waiting on, as soon as its cookie is.
+     */
     private fun maybeFinishIfSolved() {
         val cookie = CookieManager.getInstance().getCookie(targetUrl).orEmpty()
+        if (stayOpen && !isFinishing && isSignedIn(doneCookie, cookie)) {
+            Toast.makeText(this, "Signed in", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
         if (!shouldCloseOnPageFinished(stayOpen = stayOpen, alreadySolved = solved, cookie = cookie)) {
             return
         }
@@ -239,6 +278,12 @@ class SourceWebViewActivity : AppCompatActivity() {
         // A sign-in page behind Cloudflare hands out a clearance on the way in.
         // Say so, or the next request clears it and re-solves for nothing.
         NetworkHelper.lastSolveAtMs = System.currentTimeMillis()
+        // A tracker sign-in is waiting on this screen. Answer it whether the
+        // user finished or backed out — null tells it nothing was signed in.
+        if (doneCookie != null) {
+            val cookie = CookieManager.getInstance().getCookie(targetUrl).orEmpty()
+            finishSignIn(signInCookie(doneCookie, cookie))
+        }
     }
 
     /**
@@ -284,6 +329,33 @@ class SourceWebViewActivity : AppCompatActivity() {
         const val EXTRA_STAY_OPEN = "stay_open"
         const val EXTRA_TITLE = "title"
 
+        /**
+         * Login mode only: the cookie-name prefix that means the sign-in is
+         * done. With it the screen closes itself once that cookie appears, and
+         * answers the waiting `signInWebView` call when it closes.
+         */
+        const val EXTRA_DONE_COOKIE = "done_cookie"
+
+        /**
+         * The in-flight `signInWebView` call. Same shape as the Cloudflare
+         * solve's pending result in MihonBridge, and separate from it: a
+         * sign-in and a solve can be open at once, and neither may answer the
+         * other's caller.
+         */
+        private var pendingSignIn: MethodChannel.Result? = null
+
+        /** Stores [result] as the pending sign-in, answering any prior one. */
+        fun beginSignIn(result: MethodChannel.Result) {
+            pendingSignIn?.let { runCatching { it.success(null) } }
+            pendingSignIn = result
+        }
+
+        /** Answers the pending sign-in with [cookie] (null = not signed in). */
+        fun finishSignIn(cookie: String?) {
+            pendingSignIn?.let { runCatching { it.success(cookie) } }
+            pendingSignIn = null
+        }
+
         /** Cloudflare mode's intent action — see [intentFor]. */
         const val ACTION_SOLVE = "com.spyou.watch_app.action.SOLVE_CLOUDFLARE"
 
@@ -313,12 +385,14 @@ class SourceWebViewActivity : AppCompatActivity() {
             url: String,
             stayOpen: Boolean,
             title: String? = null,
+            doneCookie: String? = null,
         ): Intent = Intent(context, SourceWebViewActivity::class.java).apply {
             action = if (stayOpen) ACTION_LOGIN else ACTION_SOLVE
             if (stayOpen) data = Uri.parse(url)
             putExtra(EXTRA_URL, url)
             putExtra(EXTRA_STAY_OPEN, stayOpen)
             putExtra(EXTRA_TITLE, title)
+            if (stayOpen && doneCookie != null) putExtra(EXTRA_DONE_COOKIE, doneCookie)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 

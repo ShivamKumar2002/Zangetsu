@@ -34,6 +34,7 @@ Future<int?> showTrackerSyncSheet(
   required String title,
   required bool isAnime,
   bool reading = false,
+  bool novel = false,
   int? malId,
   int? tmdbId,
   bool tmdbIsTv = false,
@@ -52,6 +53,7 @@ Future<int?> showTrackerSyncSheet(
       title: title,
       isAnime: isAnime,
       reading: reading,
+      novel: novel,
       malId: malId,
       tmdbId: tmdbId,
       tmdbIsTv: tmdbIsTv,
@@ -68,6 +70,7 @@ class TrackerSyncSheet extends StatefulWidget {
     required this.title,
     required this.isAnime,
     this.reading = false,
+    this.novel = false,
     this.malId,
     this.tmdbId,
     this.tmdbIsTv = false,
@@ -83,6 +86,10 @@ class TrackerSyncSheet extends StatefulWidget {
   /// call site that doesn't pass it (including the TV detail screen) behaves
   /// exactly as before.
   final bool reading;
+
+  /// A novel specifically, within [reading]. Novels-only trackers
+  /// (NovelUpdates) are asked about this title only when it's set.
+  final bool novel;
   final int? malId;
   final int? tmdbId;
   final bool tmdbIsTv;
@@ -171,6 +178,7 @@ class _TrackerSyncSheetState extends State<TrackerSyncSheet> {
       imdbId: widget.imdbId,
       pinnedIds: _pinnedIds,
       kind: _kind,
+      novel: widget.novel,
     );
     // Only entries actually on a list can disagree — a tracker that's never
     // seen the title has no opinion to conflict with.
@@ -198,6 +206,7 @@ class _TrackerSyncSheetState extends State<TrackerSyncSheet> {
             imdbId: widget.imdbId,
             pinnedId: _pinnedIds[one.displayName],
             kind: _kind,
+            novel: widget.novel,
           )
         : await _loadCombined();
     if (!mounted) return;
@@ -261,6 +270,7 @@ class _TrackerSyncSheetState extends State<TrackerSyncSheet> {
         score: scoreChanged ? _score.toDouble() : null,
         progress: progressChanged ? _progress : null,
         kind: _kind,
+        novel: widget.novel,
       );
     }
     if (!mounted) return;
@@ -283,6 +293,7 @@ class _TrackerSyncSheetState extends State<TrackerSyncSheet> {
       // searches its ANIME catalogue for a film — the picker opens and finds
       // nothing, which is exactly how this looked broken.
       kind: _kind,
+      novel: widget.novel,
     );
     if (picked == null || !mounted) return;
     setState(() {
@@ -696,6 +707,7 @@ Future<TrackerSearchResult?> showTrackerMatchPicker(
   required String initialQuery,
   Tracker? tracker,
   MediaKind kind = MediaKind.anime,
+  bool novel = false,
 }) {
   return showModalBottomSheet<TrackerSearchResult>(
     context: context,
@@ -708,6 +720,7 @@ Future<TrackerSearchResult?> showTrackerMatchPicker(
       initialQuery: initialQuery,
       tracker: tracker,
       kind: kind,
+      novel: novel,
     ),
   );
 }
@@ -717,6 +730,7 @@ class _TrackerMatchPicker extends StatefulWidget {
     required this.initialQuery,
     this.tracker,
     this.kind = MediaKind.anime,
+    this.novel = false,
   });
   final String initialQuery;
 
@@ -724,6 +738,9 @@ class _TrackerMatchPicker extends StatefulWidget {
   /// what the combined sheet has always done.
   final Tracker? tracker;
   final MediaKind kind;
+
+  /// Lets novels-only trackers answer too — see [TrackerSyncSheet.novel].
+  final bool novel;
 
   @override
   State<_TrackerMatchPicker> createState() => _TrackerMatchPickerState();
@@ -762,7 +779,7 @@ class _TrackerMatchPickerState extends State<_TrackerMatchPicker> {
         ? await one
             .searchEntries(q, kind: widget.kind)
             .catchError((_) => const <TrackerSearchResult>[])
-        : await _hub.searchEntries(q, kind: widget.kind);
+        : await _hub.searchEntries(q, kind: widget.kind, novel: widget.novel);
     if (!mounted) return;
     setState(() {
       _results = r;

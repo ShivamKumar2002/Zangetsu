@@ -1,4 +1,4 @@
-// Tracker connections: AniList, MyAnimeList, Simkl, MangaBaka.
+// Tracker connections: AniList, MyAnimeList, Simkl, MangaBaka, NovelUpdates.
 part of 'settings_screen.dart';
 
 
@@ -6,7 +6,8 @@ part of 'settings_screen.dart';
 // Connections (trackers)
 // ---------------------------------------------------------------------------
 
-/// Lists the trackers (AniList / MyAnimeList / Simkl / MangaBaka); each opens
+/// Lists the trackers (AniList / MyAnimeList / Simkl / MangaBaka /
+/// NovelUpdates); each opens
 /// its own
 /// connect/disconnect screen.
 class ConnectionsScreen extends StatefulWidget {
@@ -24,6 +25,8 @@ class _ConnectionsScreenState extends State<ConnectionsScreen> {
       sl<MalService>(),
       sl<SimklService>(),
       sl<MangaBakaService>(),
+      // Signs in through the native in-app browser, which only Android has.
+      if (Platform.isAndroid) sl<NovelUpdatesService>(),
     ];
     return Scaffold(
       backgroundColor: AppColors.bg,

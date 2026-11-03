@@ -173,6 +173,9 @@ Future<void> _syncToTrackers(
   // Movies/TV stay null: they resolve by tmdbId/imdbId, not a title search.
   final title = (isAnime || reading) ? item.title : null;
   final kind = reading ? MediaKind.manga : MediaKind.anime;
+  // Brings in the novels-only trackers (NovelUpdates) for a novel, and only
+  // for one.
+  final novel = item.type == ProviderType.novel;
   if (remove) {
     await hub.removeFromList(
       malId: mal,
@@ -181,6 +184,7 @@ Future<void> _syncToTrackers(
       tmdbIsTv: isTv,
       imdbId: imdb,
       kind: kind,
+      novel: novel,
     );
   } else if (status != null) {
     await hub.setStatus(
@@ -191,6 +195,7 @@ Future<void> _syncToTrackers(
       imdbId: imdb,
       status: status,
       kind: kind,
+      novel: novel,
     );
   }
 }

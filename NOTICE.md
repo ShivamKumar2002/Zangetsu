@@ -53,6 +53,24 @@ Aniyomi / Tachiyomi
   eu/kanade/tachiyomi/ path, is a separate ecosystem on a separate version
   line and was not touched by this change.
 
+NovelNotifier (PatchScratch)
+  https://github.com/PatchScratch/NovelNotifier
+  License: MIT — Copyright (c) 2026 Wayne Yow (PatchScratch)
+Novel Library (gmathi)
+  https://github.com/gmathi/NovelLibrary
+  License: Apache-2.0
+  Novel Updates (novelupdates.com) has no public API. The Novel Updates
+  tracker (lib/core/tracker/novelupdates_*.dart) talks to the site's own pages
+  and endpoints, and which ones to use was learned from these two apps' Novel
+  Updates sync code: the read-marker call (readinglist_update.php), the
+  list-move call (updatelist.php), the remove-from-list variant, the release
+  list (admin-ajax nd_getchapters), the reading-list page structure, and the
+  WordPress sign-in cookie. No code was copied; the Dart implementation is
+  original. Novel Library ships no NOTICE file of its own to carry forward.
+  The series-finder and series-page selectors match the LNReader Novel Updates
+  plugin (https://github.com/LNReader/lnreader-plugins, MIT), which the app
+  already runs as a novel source.
+
 Other dependencies (Flutter/Dart packages and Android libraries) are used under
 their respective open-source licenses; refer to each package for details.
 

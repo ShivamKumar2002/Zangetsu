@@ -4,6 +4,7 @@ import '../models/watch_status.dart';
 import '../playback/playback_prefs.dart';
 import '../privacy/incognito_mode.dart';
 import 'mangabaka_service.dart';
+import 'novelupdates_service.dart';
 import 'tracker.dart';
 
 /// Fans every list/progress write out to all connected trackers at once
@@ -25,10 +26,15 @@ class TrackerHub {
   ///
   /// Display/selection only — the write paths already self-gate per
   /// [MediaKind] (see `MangaBakaService._canWrite`), so this never changes
-  /// what gets synced.
-  Iterable<Tracker> forMode(ContentMode mode) => mode.isReading
-      ? trackers.where((t) => t.supportsReading)
-      : trackers.where(trackerSupportsVideo);
+  /// what gets synced. A novels-only tracker (NovelUpdates) is dropped from
+  /// manga for the same reason.
+  Iterable<Tracker> forMode(ContentMode mode) => switch (mode) {
+    ContentMode.anime => trackers.where(trackerSupportsVideo),
+    ContentMode.manga => trackers.where(
+      (t) => t.supportsReading && !trackerIsNovelOnly(t),
+    ),
+    ContentMode.novel => trackers.where((t) => t.supportsReading),
+  };
 
   /// [forMode], narrowed to the ones the user has actually connected.
   Iterable<Tracker> connectedForMode(ContentMode mode) =>
@@ -75,24 +81,40 @@ class TrackerHub {
     MediaKind kind = MediaKind.anime,
     bool novel = false,
     bool auto = true,
+    String? sourceId,
+    String? showUrl,
+    String? chapterUrl,
   }) async {
     // [auto] false = the user asked for this one by hand ("Mark as watched"),
     // so the auto-track preference doesn't apply. Incognito still does.
     if (auto && !_autoTrackOn) return;
     if (IncognitoMode.on) return; // incognito: pause auto-scrobble
     await _fan(
-      (t) => t.scrobble(
-        malId: malId,
-        title: title,
-        tmdbId: tmdbId,
-        tmdbIsTv: tmdbIsTv,
-        imdbId: imdbId,
-        episode: episode,
-        season: season,
-        seasonEpisode: seasonEpisode,
-        kind: kind,
-        novel: novel,
-      ),
+      novel: novel,
+      (t) => t is NovelUpdatesService
+          // [sourceId]/[showUrl]/[chapterUrl] say where the chapter was read.
+          // Only NovelUpdates can use them — a chapter read through its own
+          // source IS one of its releases — so they go to it alone rather
+          // than onto the interface every tracker implements.
+          ? t.scrobbleChapter(
+              title: title,
+              chapter: episode,
+              sourceIdOf: sourceId,
+              showUrl: showUrl,
+              chapterUrl: chapterUrl,
+            )
+          : t.scrobble(
+              malId: malId,
+              title: title,
+              tmdbId: tmdbId,
+              tmdbIsTv: tmdbIsTv,
+              imdbId: imdbId,
+              episode: episode,
+              season: season,
+              seasonEpisode: seasonEpisode,
+              kind: kind,
+              novel: novel,
+            ),
     );
   }
 
@@ -104,7 +126,9 @@ class TrackerHub {
     String? imdbId,
     required WatchStatus status,
     MediaKind kind = MediaKind.anime,
+    bool novel = false,
   }) => _fan(
+    novel: novel,
     (t) => t.setStatus(
       malId: malId,
       title: title,
@@ -123,7 +147,9 @@ class TrackerHub {
     bool tmdbIsTv = false,
     String? imdbId,
     MediaKind kind = MediaKind.anime,
+    bool novel = false,
   }) => _fan(
+    novel: novel,
     (t) => t.removeFromList(
       malId: malId,
       title: title,
@@ -183,7 +209,7 @@ class TrackerHub {
     bool novel = false,
   }) async {
     final results = await Future.wait(
-      connected.map((t) async {
+      _connectedFor(novel: novel).map((t) async {
         try {
           return await t.fetchEntry(
             malId: malId,
@@ -220,7 +246,9 @@ class TrackerHub {
     double? score,
     int? progress,
     MediaKind kind = MediaKind.anime,
+    bool novel = false,
   }) => _fan(
+    novel: novel,
     (t) => t.updateEntry(
       malId: malId,
       title: title,
@@ -240,9 +268,10 @@ class TrackerHub {
   Future<List<TrackerSearchResult>> searchEntries(
     String query, {
     MediaKind kind = MediaKind.anime,
+    bool novel = false,
   }) async {
     final lists = await Future.wait(
-      connected.map((t) async {
+      _connectedFor(novel: novel).map((t) async {
         try {
           return await t.searchEntries(query, kind: kind);
         } catch (_) {
@@ -253,9 +282,19 @@ class TrackerHub {
     return [for (final l in lists) ...l];
   }
 
-  Future<void> _fan(Future<void> Function(Tracker) op) async {
+  /// The connected trackers a call about one title goes to. A novels-only
+  /// tracker is asked only when the caller says the title is a novel: its
+  /// catalogue holds nothing else, so a manga or anime title could only ever
+  /// resolve, by name, onto some unrelated novel.
+  Iterable<Tracker> _connectedFor({required bool novel}) =>
+      novel ? connected : connected.where((t) => !trackerIsNovelOnly(t));
+
+  Future<void> _fan(
+    Future<void> Function(Tracker) op, {
+    bool novel = false,
+  }) async {
     await Future.wait(
-      connected.map((t) async {
+      _connectedFor(novel: novel).map((t) async {
         try {
           await op(t);
         } catch (_) {/* one tracker failing must not block the rest */}
@@ -265,10 +304,17 @@ class TrackerHub {
 }
 
 /// Whether this tracker has an anime/film library at all. The mirror of
-/// [Tracker.supportsReading]: false for MangaBaka, which is reading-only.
+/// [Tracker.supportsReading]: false for MangaBaka and NovelUpdates, which are
+/// reading-only.
 ///
 /// A function rather than another getter on [Tracker] on purpose — the
 /// interface is `implements`-only, so a new member would force every other
-/// tracker and every test fake to declare it, for one exception. If a second
-/// reading-only tracker ever lands, add it here.
-bool trackerSupportsVideo(Tracker t) => t is! MangaBakaService;
+/// tracker and every test fake to declare it, for one exception. A second
+/// reading-only tracker (NovelUpdates) is listed here for the same reason.
+bool trackerSupportsVideo(Tracker t) =>
+    t is! MangaBakaService && t is! NovelUpdatesService;
+
+/// Whether this tracker catalogues novels and nothing else — NovelUpdates.
+/// Same reasoning as [trackerSupportsVideo] for being a function: one
+/// exception does not earn a member on the interface.
+bool trackerIsNovelOnly(Tracker t) => t is NovelUpdatesService;

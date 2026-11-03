@@ -31,8 +31,10 @@ Tracker? pickHomeTracker(TrackerHub hub, ZKind kind, {String? preferred}) {
 bool trackerServesKind(Tracker t, ZKind kind) => switch (kind) {
   // Not everyone carries an anime library — MangaBaka is reading-only.
   ZKind.anime => trackerSupportsVideo(t),
-  // Reading works only where a reading library exists.
-  ZKind.manga || ZKind.novel => t.supportsReading,
+  // Reading works only where a reading library exists — and a novels-only
+  // one (NovelUpdates) has nothing for manga.
+  ZKind.manga => t.supportsReading && !trackerIsNovelOnly(t),
+  ZKind.novel => t.supportsReading,
   // Only Simkl has movie/series lists.
   ZKind.movie || ZKind.tv => t.displayName == 'Simkl',
 };

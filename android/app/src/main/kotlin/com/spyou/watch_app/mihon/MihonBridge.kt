@@ -554,6 +554,30 @@ class MihonBridge(
                     result.success(null)
                 }
 
+                // Login mode with a caller waiting: answers with the one cookie
+                // named by `doneCookie` once the screen closes (it closes itself
+                // when that cookie appears), or null if the user backed out.
+                // The session stays in the WebView jar — the novel client
+                // already sends it from there.
+                "signInWebView" -> {
+                    val url = call.argument<String>("url")
+                    val doneCookie = call.argument<String>("doneCookie")
+                    if (url.isNullOrBlank() || doneCookie.isNullOrBlank()) {
+                        result.error("bad_args", "url and doneCookie are required", null)
+                        return@setMethodCallHandler
+                    }
+                    SourceWebViewActivity.beginSignIn(result)
+                    context.startActivity(
+                        SourceWebViewActivity.intentFor(
+                            context,
+                            url,
+                            stayOpen = true,
+                            title = call.argument<String>("title"),
+                            doneCookie = doneCookie,
+                        ),
+                    )
+                }
+
                 // Twin of the Aniyomi handler: hand the source's own settings
                 // to Flutter as plain data so the app draws them itself.
                 "readSourceSettings" -> {

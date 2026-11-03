@@ -822,6 +822,7 @@ class _DetailViewState extends State<_DetailView>
       title: detail.title,
       isAnime: detail.type == ProviderType.anime,
       reading: reading,
+      novel: detail.type == ProviderType.novel,
       malId: detail.malId ?? widget.item.malId,
       tmdbId: detail.tmdbId ?? widget.item.tmdbId,
       tmdbIsTv: detail.tmdbIsTv,

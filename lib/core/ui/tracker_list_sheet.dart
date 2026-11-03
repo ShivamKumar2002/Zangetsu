@@ -31,6 +31,7 @@ Future<int?> showTrackerListSheet(
   required String title,
   required bool isAnime,
   bool reading = false,
+  bool novel = false,
   int? malId,
   int? tmdbId,
   bool tmdbIsTv = false,
@@ -48,6 +49,7 @@ Future<int?> showTrackerListSheet(
       title: title,
       isAnime: isAnime,
       reading: reading,
+      novel: novel,
       malId: malId,
       tmdbId: tmdbId,
       tmdbIsTv: tmdbIsTv,
@@ -63,6 +65,7 @@ class TrackerListSheet extends StatefulWidget {
     required this.title,
     required this.isAnime,
     this.reading = false,
+    this.novel = false,
     this.malId,
     this.tmdbId,
     this.tmdbIsTv = false,
@@ -73,6 +76,10 @@ class TrackerListSheet extends StatefulWidget {
   final String title;
   final bool isAnime;
   final bool reading;
+
+  /// A novel specifically, within [reading] — brings in the novels-only
+  /// trackers (NovelUpdates), which never answer for a manga.
+  final bool novel;
   final int? malId;
   final int? tmdbId;
   final bool tmdbIsTv;
@@ -109,8 +116,9 @@ class _TrackerListSheetState extends State<TrackerListSheet> {
 
   MediaKind get _kind => widget.reading ? MediaKind.manga : MediaKind.anime;
 
-  ContentMode get _mode =>
-      widget.reading ? ContentMode.manga : ContentMode.anime;
+  ContentMode get _mode => widget.novel
+      ? ContentMode.novel
+      : (widget.reading ? ContentMode.manga : ContentMode.anime);
 
   @override
   void initState() {
@@ -136,6 +144,7 @@ class _TrackerListSheetState extends State<TrackerListSheet> {
             imdbId: widget.imdbId,
             pinnedId: _pinnedIds[t.displayName],
             kind: _kind,
+            novel: widget.novel,
           );
         } catch (_) {
           return null;
@@ -162,6 +171,7 @@ class _TrackerListSheetState extends State<TrackerListSheet> {
       title: widget.title,
       isAnime: widget.isAnime,
       reading: widget.reading,
+      novel: widget.novel,
       malId: widget.malId,
       tmdbId: widget.tmdbId,
       tmdbIsTv: widget.tmdbIsTv,
@@ -182,6 +192,7 @@ class _TrackerListSheetState extends State<TrackerListSheet> {
       title: widget.title,
       isAnime: widget.isAnime,
       reading: widget.reading,
+      novel: widget.novel,
       malId: widget.malId,
       tmdbId: widget.tmdbId,
       tmdbIsTv: widget.tmdbIsTv,

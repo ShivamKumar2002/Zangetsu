@@ -1,6 +1,8 @@
 package com.spyou.watch_app.mihon
 
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -83,5 +85,45 @@ class SourceWebViewDecisionTest {
                 ),
             )
         }
+    }
+
+    // -- Sign-in (login mode with a done cookie) ----------------------------
+
+    @Test
+    fun `sign-in is done once a cookie NAMED with the prefix appears`() {
+        assertTrue(
+            isSignedIn(
+                doneCookie = "wordpress_logged_in",
+                cookie = "cf_clearance=a; wordpress_logged_in_9f3c=user%7C1%7Ct%7Ch",
+            ),
+        )
+    }
+
+    @Test
+    fun `sign-in is not done on a value that merely contains the text`() {
+        assertFalse(
+            isSignedIn(
+                doneCookie = "wordpress_logged_in",
+                cookie = "note=wordpress_logged_in; cf_clearance=a",
+            ),
+        )
+    }
+
+    @Test
+    fun `plain login mode never signs itself in`() {
+        assertFalse(isSignedIn(doneCookie = null, cookie = "wordpress_logged_in_x=1"))
+        assertFalse(isSignedIn(doneCookie = "", cookie = "wordpress_logged_in_x=1"))
+    }
+
+    @Test
+    fun `only the asked-for cookie goes back, not the jar`() {
+        assertEquals(
+            "wordpress_logged_in_9f3c=user%7C1",
+            signInCookie(
+                doneCookie = "wordpress_logged_in",
+                cookie = "cf_clearance=a; wordpress_logged_in_9f3c=user%7C1; other=b",
+            ),
+        )
+        assertNull(signInCookie(doneCookie = "wordpress_logged_in", cookie = "cf_clearance=a"))
     }
 }
